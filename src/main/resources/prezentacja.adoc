@@ -1,0 +1,260 @@
+:pdf-page-layout: landscape
+:icons: font
+
+
+= REFLEKSJA
+
+image::pics/java-reflection.png[align=center]
+
+{empty} +
+
+=== Rozkład jazdy na dziś:
+
+. Co mówią o refleksji
+. Zalety
+. Wady
+. API
+.. object `Class`
+.. pola, metody i konstruktory
+.. tablice i typy wiliczeniowe
+
+
+'''
+{empty} +
+
+.co piszą o refleksji ...
+[sidebar]
+****
+----
+" ... to wszechstronny i skomplikowany mechanizm."
+----
+
+----
+"Jest interesująca przede wszystkim dla twórców narzędzi, mniej dla programistów aplikacji."
+----
+
+----
+"Jest to stosunkowo zaawansowana funkcjonalność i powinna być używana tylko przez programistów, którzy dobrze znają podstawy języka."
+----
+
+----
+"... refleksja jest potężną techniką i może umożliwić aplikacjom wykonywanie operacji, które w innym przypadku byłyby niemożliwe."
+----
+****
+
+TIP: Refleksja daje nam spore możliwości lecz nie można jej nadużywać.
+
+'''
+
+{empty} +
+
+=== Jakie możliwości daje nam mechanizm refleksji:
+
+1. Umożliwia nam analizę właściwości klasy w trakcie działania programu.
+2. Pozwala na inspekcję obiektów w czasie działania programu.
+3. Daje możliwość zaimplementowania generycznego kodu manipulującego tablicami.
+
+NOTE: Kilka znanych frameworków, korzystających z refleksji: JUnit, Spring (np. wstrzykiwanie zależności), Hibernate.
+
+'''
+
+{empty} +
+
+=== Wady
+
+image::pics/vampire.png[align=center]
+
+1. Mniejsza wydajność refleksji uniemożliwia wykonywanie pewnych optymalizacji, które stosuje sam JVM w związku z czym jest wolniejsza i należy jej unikać w blokach kodu, które są wykonywane często.
+2. Łamanie zasad hermetyzacji - dostęp do pól czy metod prywatnych.
+3. Kwestie dot. bezpieczeństwa - zabezpieczenia (menager bezpieczeństwa) może nie pozwolić na implementowanie kodu refleksyjnego.
+4. Zrozumienie i debuggowanie kodu.
+
+IMPORTANT: Jeśli jest możliwość wykonania operacji bez pomocy refleksji, to lepiej jej unikać.
+
+'''
+
+{empty} +
+
+=== API
+
+NOTE: Punktem wejścia dla wszystkich operacji refleksji jest `java.lang.Class`.
+
+1. https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html[Class] - istnieje kilka sposobów uzyskania obiektu `Class` w zależności od tego, czy kod ma dostęp do obiektu, nazwy klasy, typu lub istniejącego `Class`.
+
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#getClass--[Object.getClass()]
+[source,java]
+    Class<? extends Console> cl = System.console().getClass();
+    System.out.println(cl);
+    Console console = System.console();
+    char[] password = console.readPassword("Enter password: ");
+    console.printf(String.valueOf(password) + "\n");
+
+.. `.class` - jeśli wiemy jak tym ale nie mamy dostępu do instancji.
+To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
+[source,java]
+    Class<?> c = int[][][].class;
+    System.out.println(c);
+    System.out.println(double.class);
+    System.out.println(java.io.PrintStream.class);
+
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#forName-java.lang.String-[Class.forName()] - jeśli dysponujemy z pełni kwalifikowanej nazwy to możemy skorzystać z tej metody.
+[source, java]
+    Class<?> doubleArr = Class.forName("[D");
+    System.out.println(doubleArr);
+
+.. Pole `TYPE` dostępne w opakowaniach na prymitywy.
+[source,java]
+    System.out.println(Double.TYPE);
+    System.out.println(Void.TYPE);
+
+.. Metody, które zwracają `Class`:
+... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getSuperclass--[Class.getSuperclass()] - zwraca nadklasę.
+[source,java]
+    System.out.println(String.class.getSuperclass());
+    System.out.println(Integer.TYPE.getSuperclass());
+
+... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getClasses--[Class.getClasses()] vs https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredClasses--[Class.getDeclaredClasses()]
+[source,java]
+    Class<?>[] c = Character.class.getClasses();
+    Class<?>[] c = Character.class.getDeclaredClasses();
+... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaringClass--[Class.getDeclaringClass()] vs https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getEnclosingClass--[Class.getEnclosingClass()]
+[source,java]
+    Field f = System.class.getDeclaredField("out");
+    Class<?> c = f.getDeclaringClass();
+    System.out.println(c);
+    System.out.println(Thread.State.class.getEnclosingClass());
+
+2. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Modifier.html[java.lang.reflect.Modifier] - posiada metodę, która po otrzymaniu odpowiedniej liczby z metody https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getModifiers--[Class.getModifiers()] zamienia ją na odpowiedni modyfikator.
+[TIP]
+`ExaminingClassModifiersAndTypes.class` - jako przykład.
+
+3. Prześwietlanie klas w kontekście pól i metod jakie zawierają.
+
+.Class API dot. pól
+[cols="1,1,1,1"]
+|===
+|**https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html[Class API]**
+|**List of members?**
+|**Inherited members?**
+|**Private members?**
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredField-java.lang.String-[getDeclaredField()]
+|no
+|no
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getField-java.lang.String-[getField()]
+|no
+|yes
+|no
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredFields--[getDeclaredFields()]
+|yes
+|no
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getFields--[getFields()]
+|yes
+|yes
+|no
+
+|===
+
+.Class API dot. metod
+[cols="1,1,1,1"]
+|===
+|**https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html[Class API]**
+|**List of members?**
+|**Inherited members?**
+|**Private members?**
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredMethod-java.lang.String-java.lang.Class...-[getDeclaredMethod()]
+|no
+|no
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethod-java.lang.String-java.lang.Class...-[getMethod()]
+|no
+|yes
+|no
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredMethods--[getDeclaredMethods()]
+|yes
+|no
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--[getMethods()]
+|yes
+|yes
+|no
+
+|===
+
+.Class API dot. konstruktorów
+[cols="1,1,1,1"]
+|===
+|**https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html[Class API]**
+|**List of members?**
+|**Inherited members?**
+|**Private members?**
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredConstructor-java.lang.Class...-[getDeclaredConstructor()]
+|no
+|N/A
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getConstructor-java.lang.Class...--[getConstructor()]
+|no
+|N/A
+|no
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredConstructors--[getDeclaredConstructors()]
+|yes
+|N/A
+|yes
+
+|https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getConstructors--[getConstructors()]
+|yes
+|N/A
+|no
+
+|===
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
