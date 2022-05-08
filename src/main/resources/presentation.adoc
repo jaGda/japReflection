@@ -64,14 +64,14 @@ NOTE: Debugery oraz kilka znanych frameworków, korzystających z refleksji: JUn
 '''
 {empty} +
 
-=== Wady
+=== Niekoniecznie zalety
 
-image::pics/vampire.png[align=center]
+image::pics/vampire.png[width=640,align=center]
 {empty} +
 
-1. Mniejsza wydajność refleksji uniemożliwia wykonywanie pewnych optymalizacji, które stosuje sam JVM w związku z czym jest wolniejsza i należy jej unikać w blokach kodu, które są wykonywane często.
-2. Łamanie zasad hermetyzacji - dostęp do pól czy metod prywatnych.
-3. Kwestie dot. bezpieczeństwa - wewnętzrne zabezpieczenia aplikacji (menager bezpieczeństwa) mogą nie pozwolić na implementowanie kodu refleksyjnego.
+1. Narzut związany z wydajnością - programy refleksyjne ze względu na swą specyfikę uniemożliwiają wykonywanie optymalizacji, które stosuje sam JVM. W efekcie czego kod refleksyjny jest wolniejszy i należy go unikać w blokach kodu, które są wykonywane często.
+2. Łamanie zasad hermetyzacji - dostęp do pól czy metod prywatnych, eksponowanie stanu to zło.
+3. Kwestie dot. bezpieczeństwa - wewnętrzne zabezpieczenia aplikacji (menager bezpieczeństwa) mogą nie pozwolić na implementowanie kodu refleksyjnego.
 4. Zrozumienie i debuggowanie kodu.
 
 IMPORTANT: Jeśli jest możliwość wykonania operacji bez pomocy refleksji, to lepiej jej unikać.
@@ -263,13 +263,84 @@ Przykłady -  `ObtainingMethodTypes`, `ObtainingNamesOfMethodParameters`, `Metho
 [TIP]
 Przykład - `CreatingNewClassInstances`
 
+4. Tablice i typy wyliczeniowe - JVM postrzega tablice oraz typy wyliczeniowe jako klasy. Wiele metod z klasy `Class` można na nich wywołać. Biblioteka refleksji dostarcza również specjalne API dla tych dwóch typów.
 
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Array.html[java.lang.reflect.Array]
++
+[source,java]
+Object copyOf(Object obj, int newLength) {
+        Class<?> cl = obj.getClass();
+        if (!cl.isArray()) return null;
+        Class<?> componentType = cl.getComponentType();
+        int length = Array.getLength(obj);
+        Object newArray = Array.newInstance(componentType, newLength);
+        System.arraycopy(obj, 0, newArray, 0, newLength);
+        return newArray;
+    }
 
+.. Typy wyliczeniowy traktowany jest klasa, ponieważ podobnie zawiera konstruktor, metody oraz pola. Biblioteka refleksji dostarcza trzy specyficzne metody dla tego typu:
+... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#isEnum--[Class.isEnum()]
+... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getEnumConstants--[Class.getEnumConstants()]
+... https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html#isEnumConstant--[java.lang.reflect.Field.isEnumConstant()]
++
+[source,java]
+----
+import java.util.Arrays;
+import static java.lang.System.out;
 
+enum Eon { HADEAN, ARCHAEAN, PROTEROZOIC, PHANEROZOIC }
 
+public class EnumConstants {
 
+    public static void main(String... args) {
+        try {
+            Class<?> c = (args.length == 0 ? Eon.class : Class.forName(args[0]));
+            out.format("Enum name:  %s%nEnum constants:  %s%n",
+            c.getName(), Arrays.asList(c.getEnumConstants()));
+            if (c == Eon.class)
+            out.format("  Eon.values():  %s%n",
+            Arrays.asList(Eon.values()));
+        } catch (ClassNotFoundException e) {
+	    //
+        }
+    }
+}
+----
++
+[source,java]
+----
+import java.lang.reflect.Field;
+import static java.lang.System.out;
 
+enum TraceLevel { OFF, LOW, MEDIUM, HIGH, DEBUG }
 
+class MyServer {
+    private TraceLevel level = TraceLevel.OFF;
+}
+
+public class SetTrace {
+
+    public static void main(String... args) {
+	TraceLevel newLevel = TraceLevel.valueOf(args[0]);
+
+	try {
+	    MyServer svr = new MyServer();
+	    Class<?> c = svr.getClass();
+	    Field f = c.getDeclaredField("level");
+	    f.setAccessible(true);
+	    TraceLevel oldLevel = (TraceLevel)f.get(svr);
+	    out.format("Original trace level:  %s%n", oldLevel);
+
+	    if (oldLevel != newLevel) {
+ 		f.set(svr, newLevel);
+		out.format("    New  trace level:  %s%n", f.get(svr));
+	    }
+	} catch (Exception e) {
+	    //
+        }
+    }
+}
+----
 
 
 
