@@ -1,4 +1,4 @@
-package jap.reflection.classes;
+package jap.reflection.members;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

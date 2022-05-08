@@ -82,6 +82,7 @@ NOTE: Punktem wejścia dla wszystkich operacji refleksji jest `java.lang.Class`.
 1. https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html[Class] - istnieje kilka sposobów uzyskania obiektu `Class` w zależności od tego, czy kod ma dostęp do obiektu, nazwy klasy, typu lub istniejącego `Class`.
 
 .. https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#getClass--[Object.getClass()]
++
 [source,java]
     Class<? extends Console> cl = System.console().getClass();
     System.out.println(cl);
@@ -91,6 +92,7 @@ NOTE: Punktem wejścia dla wszystkich operacji refleksji jest `java.lang.Class`.
 
 .. `.class` - jeśli wiemy jak tym ale nie mamy dostępu do instancji.
 To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
++
 [source,java]
     Class<?> c = int[][][].class;
     System.out.println(c);
@@ -98,38 +100,53 @@ To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
     System.out.println(java.io.PrintStream.class);
 
 .. https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#forName-java.lang.String-[Class.forName()] - jeśli dysponujemy z pełni kwalifikowanej nazwy to możemy skorzystać z tej metody.
-[source, java]
++
+[source,java]
     Class<?> doubleArr = Class.forName("[D");
     System.out.println(doubleArr);
 
 .. Pole `TYPE` dostępne w opakowaniach na prymitywy.
++
 [source,java]
     System.out.println(Double.TYPE);
     System.out.println(Void.TYPE);
 
 .. Metody, które zwracają `Class`:
 ... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getSuperclass--[Class.getSuperclass()] - zwraca nadklasę.
++
 [source,java]
     System.out.println(String.class.getSuperclass());
     System.out.println(Integer.TYPE.getSuperclass());
 
 ... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getClasses--[Class.getClasses()] vs https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaredClasses--[Class.getDeclaredClasses()]
++
 [source,java]
     Class<?>[] c = Character.class.getClasses();
     Class<?>[] c = Character.class.getDeclaredClasses();
+
 ... https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getDeclaringClass--[Class.getDeclaringClass()] vs https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getEnclosingClass--[Class.getEnclosingClass()]
++
+[TIP]
+`RetrievingClassObjects` - przykład.
++
 [source,java]
     Field f = System.class.getDeclaredField("out");
     Class<?> c = f.getDeclaringClass();
     System.out.println(c);
     System.out.println(Thread.State.class.getEnclosingClass());
 
-2. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Modifier.html[java.lang.reflect.Modifier] - posiada metodę, która po otrzymaniu odpowiedniej liczby z metody https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getModifiers--[Class.getModifiers()] zamienia ją na odpowiedni modyfikator.
+2. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Modifier.html[java.lang.reflect.Modifier] - posiada metodę, która po zwróceniu liczby z metody https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getModifiers--[Class.getModifiers()] zamienia ją na odpowiedni modyfikator.
++
 [TIP]
-`ExaminingClassModifiersAndTypes.class` - jako przykład.
+`ExaminingClassModifiersAndTypes.class` - przykład.
 
-3. Prześwietlanie klas w kontekście pól i metod jakie zawierają.
+3. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Member.html[java.lang.reflect.Member] - interfejs identyfikujący poszczególnego członka klasy.
++
+[TIP]
+`DiscoveringClassMembers` - przykład.
 
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html[java.lang.reflect.Field]
++
 .Class API dot. pól
 [cols="1,1,1,1"]
 |===
@@ -157,9 +174,15 @@ To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
 |yes
 |yes
 |no
-
 |===
++
+[TIP]
+Przykłady: `ObtainingFieldTypes`,
+`GettingAndSettingFieldValues`
 
+
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html[java.lang.reflect.Method]
++
 .Class API dot. metod
 [cols="1,1,1,1"]
 |===
@@ -187,9 +210,13 @@ To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
 |yes
 |yes
 |no
-
 |===
++
+[TIP]
+Przykłady - `ObtainingMethodTypes`, `ObtainingNamesOfMethodParameters`
 
+.. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html[java.lang.reflect.Constructor]
++
 .Class API dot. konstruktorów
 [cols="1,1,1,1"]
 |===
@@ -217,8 +244,10 @@ To również dobry sposób aby uzyskać `Class` z typu prymitywnego.
 |yes
 |N/A
 |no
-
 |===
++
+[TIP]
+Przykład - `CreatingNewClassInstances`
 
 
 

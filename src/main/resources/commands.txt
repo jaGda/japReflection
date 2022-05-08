@@ -1,0 +1,5 @@
+/lib/jvm/java-16-openjdk-amd64/bin/java --illegal-access=warn -classpath /home/dan/Development/japReflection/src/main/java/ jap.reflection.members.constructors.CreatingNewClassInstances
+--------------
+/lib/jvm/java-16-openjdk-amd64/bin/javac CreatingNewClassInstances.java
+--------------
+javac -parameters ExampleMethods.java

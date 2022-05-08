@@ -1,6 +1,5 @@
 package jap.reflection.classes;
 
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
