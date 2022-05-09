@@ -9,10 +9,10 @@ import java.util.List;
 
 import static java.lang.System.out;
 
-//java.util.concurrent.ConcurrentNavigableMap
-//"[Ljava.lang.String;"
-//java.io.InterruptedIOException
-//java.security.Identity
+// java.util.concurrent.ConcurrentNavigableMap
+// "[Ljava.lang.String;"
+// java.io.InterruptedIOException
+// java.security.Identity
 class ExaminingClassModifiersAndTypes {
     public static void main(String... args) {
         try {
@@ -24,7 +24,7 @@ class ExaminingClassModifiersAndTypes {
             out.format("Type Parameters:%n");
             TypeVariable<?>[] tv = c.getTypeParameters();
             if (tv.length != 0) {
-                out.format("  ");
+                out.print("  ");
                 for (TypeVariable<?> t : tv)
                     out.format("%s ", t.getName());
                 out.format("%n%n");
@@ -45,7 +45,7 @@ class ExaminingClassModifiersAndTypes {
             out.format("Inheritance Path:%n");
             List<Class<?>> l = new ArrayList<>();
             printAncestor(c, l);
-            if (l.size() != 0) {
+            if (!l.isEmpty()) {
                 for (Class<?> cl : l)
                     out.format("  %s%n", cl.getCanonicalName());
                 out.format("%n");

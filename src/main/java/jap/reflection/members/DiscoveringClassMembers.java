@@ -10,6 +10,7 @@ import static java.lang.System.out;
 //java.lang.ClassCastException CONSTRUCTOR
 //java.nio.channels.ReadableByteChannel METHOD
 //ClassMember FIELD METHOD
+
 class DiscoveringClassMembers {
     public static void main(String... args) {
         try {
@@ -53,12 +54,12 @@ class DiscoveringClassMembers {
     private static void printMembers(Member[] mbrs, String s) {
         out.format("%s:%n", s);
         for (Member mbr : mbrs) {
-            if (mbr instanceof Field)
-                out.format("  %s%n", ((Field) mbr).toGenericString());
+            if (mbr instanceof Field field)
+                out.format("  %s%n", field.toGenericString());
             else if (mbr instanceof Constructor)
                 out.format("  %s%n", ((Constructor<?>) mbr).toGenericString());
-            else if (mbr instanceof Method)
-                out.format("  %s%n", ((Method) mbr).toGenericString());
+            else if (mbr instanceof Method method)
+                out.format("  %s%n", method.toGenericString());
         }
         if (mbrs.length == 0)
             out.format("  -- No %s --%n", s);

@@ -39,11 +39,9 @@ class ReflectiveInstantiation {
             Logger.getLogger(ReflectiveInstantiation.class.getName())
                     .log(Level.SEVERE, "Constructor not accessible");
         } catch (InvocationTargetException e) {
-            Logger.getLogger(ReflectiveInstantiation.class.getName())
-                    .log(Level.SEVERE, "Constructor threw " + e.getCause());
+            Logger.getLogger(ReflectiveInstantiation.class.getName()).log(Level.SEVERE, "Constructor threw " + e.getCause());
         } catch (ClassCastException e) {
-            Logger.getLogger(ReflectiveInstantiation.class.getName())
-                    .log(Level.SEVERE, "Class doesn't implement Set", e);
+            Logger.getLogger(ReflectiveInstantiation.class.getName()).log(Level.SEVERE, "Class does not implement Set");
         }
 
         assert s != null;

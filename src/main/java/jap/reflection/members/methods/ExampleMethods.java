@@ -3,7 +3,7 @@ package jap.reflection.members.methods;
 import java.util.Collection;
 import java.util.List;
 
-class ExampleMethods<T> {
+class ExampleMethods {
 
     public boolean simpleMethod(String stringParam, int intParam) {
         System.out.println("String: " + stringParam + ", integer: " + intParam);

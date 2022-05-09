@@ -2,16 +2,17 @@ package jap.reflection.classes;
 
 import java.io.Serializable;
 
-class RetrievingClassObjects {
-    public static void main(String[] args) throws ClassNotFoundException, NoSuchFieldException {
-        Example.InnerInterface<String> i = new Example().blah();
-        i.doSomething("Hello world!!");
-        System.out.println(i.getClass().getEnclosingClass());
-        System.out.println(i.getClass().getDeclaringClass());
+public class RetrievingClassObject {
+    public static void main(String[] args) throws NoSuchFieldException {
+        /**
+         * Użyj metod Class.getDeclaringClass() vs Class.getEnclosingClass()
+         * na interfejsie wewnętrznym i polu w klasie Example
+         */
     }
 }
 
 class Example implements Serializable {
+    InnerInterface<Integer> anInterface = System.out::println;
 
     InnerInterface<String> blah() {
         return new InnerInterface<String>() {
@@ -26,3 +27,4 @@ class Example implements Serializable {
         void doSomething(T s);
     }
 }
+
