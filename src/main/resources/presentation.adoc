@@ -170,6 +170,9 @@ Należy zauważyć, że obiekt klasy `Class` w rzeczywistości oznacza _typ_, kt
 
 .. https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html[java.lang.reflect.Field]
 +
+[TIP]
+Jeśli zobaczycie w projekcie, że jakieś pole czy metoda nie są nigdzie używane, zanim je usuniecie, upewnijcie się, że nie jest używane przez refleksję - PK
++
 .Class API dot. pól
 [cols="1,1,1,1"]
 |===

@@ -1,6 +1,6 @@
 package jap.reflection.classes;
 
-import java.io.Serializable;
+import java.lang.reflect.Field;
 
 public class RetrievingClassObject {
     public static void main(String[] args) throws NoSuchFieldException {
@@ -8,11 +8,17 @@ public class RetrievingClassObject {
          * Użyj metod Class.getDeclaringClass() vs Class.getEnclosingClass()
          * na interfejsie wewnętrznym i polu w klasie Example
          */
+        Class<?> cl = Example.class;
+        Field field = cl.getField("anInterface");
+        System.out.println(field.getDeclaringClass());
+
+        Example.InnerInterface<String> innerInterface = new Example().blah();
+        System.out.println(innerInterface.getClass().getEnclosingClass());
     }
 }
 
-class Example implements Serializable {
-    InnerInterface<Integer> anInterface = System.out::println;
+class Example {
+    public InnerInterface<Integer> anInterface = System.out::println;
 
     InnerInterface<String> blah() {
         return new InnerInterface<String>() {

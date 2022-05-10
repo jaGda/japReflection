@@ -2,6 +2,7 @@ package jap.reflection.members.fields;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.logging.Logger;
 
 class ObtainingFieldTypes<T> {
     public boolean[][] b = {{false, false}, {true, true}};

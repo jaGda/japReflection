@@ -14,7 +14,8 @@ class GettingAndSettingFieldValues {
             Class<?> c = book.getClass();
 
             Field chap = c.getDeclaredField("chapters");
-            out.format(fmt, "before", "chapters", book.chapters);
+            chap.setAccessible(true);
+            out.format(fmt, "before", "chapters", chap.get(book));
             chap.setLong(book, 12);
             out.format(fmt, "after", "chapters", chap.getLong(book));
 
@@ -38,7 +39,7 @@ class GettingAndSettingFieldValues {
 }
 
 class Book {
-    public long chapters = 0;
+    static private final long chapters = 0;
     public String[] characters = {"Alice", "White Rabbit"};
     public Tweedle twin = Tweedle.DEE;
 }
